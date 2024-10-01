@@ -30,6 +30,6 @@ spring:
 #    url: jdbc:mysql://${APP_DB_HOST:localhost}:${APP_DB_PORT:3306}/${APP_DB_NAME:songyen}
 #    username: ${APP_DB_USER:root}
 #    password: ${APP_DB_PASS:mysql}
-    url: jdbc:mysql://localhost:3306/bi
+    url: jdbc:mysql://localhost:3307/bi
     username: ${APP_DB_USER:root}
     password: ${APP_DB_PASS:123456}

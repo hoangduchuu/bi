@@ -1,1 +1,35 @@
-spring.application.name=bi
+server:
+  port: 8080
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] [%X{traceId}/%X{spanId}] %highlight(%-5level) %logger{36}.%M\\(%line\\) - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] [%X{traceId}/%X{spanId}] %-5level %logger{36} - %msg%n"
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: TRACE
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+spring:
+  application:
+    name: proejctname
+  flyway:
+    enabled: true
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+#      connection-timeout: ${APP_DB_CON_TIMEOUT:50000}
+#      idle-timeout: ${APP_DB_IDLE_TIMEOUT:300000}
+#      max-lifetime: ${APP_DB_MAX_LIFETIME:900000}
+#      maximum-pool-size: ${APP_DB_POOL_SIZE:20}
+#      minimum-idle: ${APP_DB_POOL_IDLE:10}
+      pool-name: ConnPool
+      connection-test-query: select 1
+#    url: jdbc:mysql://${APP_DB_HOST:localhost}:${APP_DB_PORT:3306}/${APP_DB_NAME:songyen}
+#    username: ${APP_DB_USER:root}
+#    password: ${APP_DB_PASS:mysql}
+    url: jdbc:mysql://localhost:3306/bi
+    username: ${APP_DB_USER:root}
+    password: ${APP_DB_PASS:123456}

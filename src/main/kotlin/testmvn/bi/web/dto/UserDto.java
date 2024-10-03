@@ -1,12 +1,15 @@
 package testmvn.bi.web.dto;
 
-import jakarta.persistence.Column;
 import lombok.Data;
+import java.math.BigDecimal;
 
 @Data
 public class UserDto {
-
-    private String brand;
-
-    private String from;
+    private Long id;
+    private String username;
+    private String email;
+    private String fullname;
+    private String phone;
+    private String role;
+    private BigDecimal balance;
 }

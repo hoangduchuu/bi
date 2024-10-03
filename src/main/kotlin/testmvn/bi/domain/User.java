@@ -1,25 +1,30 @@
 package testmvn.bi.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import testmvn.bi.domain.base.BaseEntity;
 
 import java.math.BigDecimal;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class User extends BaseEntity {
 
-    @Column(unique = true, nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Long userId;
+
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
-    private String password; // hashed value
+    private String password;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)

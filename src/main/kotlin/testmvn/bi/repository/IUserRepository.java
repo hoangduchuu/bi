@@ -6,5 +6,10 @@ import testmvn.bi.domain.User;
 
 @Repository
 public interface IUserRepository extends JpaRepository<User, Long> {
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByPhone(String phone);
 
 }

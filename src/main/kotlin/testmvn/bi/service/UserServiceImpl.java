@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import testmvn.bi.domain.User;
+import testmvn.bi.domain.Role;
 import testmvn.bi.mapper.UserMapper;
+import testmvn.bi.repository.IRoleRepository;
 import testmvn.bi.repository.IUserRepository;
 import testmvn.bi.web.dto.UserDto;
 import testmvn.bi.web.dto.request.CreateUserRequest;
@@ -18,7 +20,6 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Base64;
 
 @Service
@@ -26,6 +27,7 @@ import java.util.Base64;
 public class UserServiceImpl implements IUserService {
 
     private final IUserRepository userRepository;
+    private final IRoleRepository roleRepository;
     private final UserMapper userMapper;
 
     @Override
@@ -40,18 +42,12 @@ public class UserServiceImpl implements IUserService {
         user.setPhone(request.getPhone());
 
         // Set role
-        try {
-            user.setRole(User.Role.admin);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid role specified", e);
-        }
+        Role adminRole = roleRepository.findByName("ADMIN")
+                .orElseThrow(() -> new IllegalStateException("ADMIN role not found"));
+        user.addRole(adminRole);
 
         // Set balance
-        try {
-            user.setBalance(new BigDecimal(1000));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid balance format", e);
-        }
+        user.setBalance(new BigDecimal(1000));
 
         // Validate required fields
         if (user.getUsername() == null || user.getEmail() == null || user.getFullname() == null || request.getPassword() == null) {
@@ -65,10 +61,9 @@ public class UserServiceImpl implements IUserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
-        if (userRepository.existsByPhone(user.getPhone())) {
+        if (user.getPhone() != null && userRepository.existsByPhone(user.getPhone())) {
             throw new IllegalArgumentException("Phone already exists");
         }
-
 
         // Hash and set the password
         user.setPassword(hashPassword(request.getPassword()));
@@ -95,6 +90,4 @@ public class UserServiceImpl implements IUserService {
             throw new RuntimeException("Failed to hash password", e);
         }
     }
-
-
 }

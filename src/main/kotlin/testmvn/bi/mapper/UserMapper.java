@@ -2,24 +2,28 @@ package testmvn.bi.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import testmvn.bi.domain.User;
+import testmvn.bi.domain.Role;
 import testmvn.bi.web.dto.UserDto;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Mapper(componentModel = "spring")
-public interface UserMapper extends EntityMapper<UserDto, User> {
+public interface UserMapper {
 
-    @Override
-    @Mapping(target = "userId", ignore = true)
-    User toEntity(UserDto dto);
+    @Mapping(target = "roles", source = "roles")
+    UserDto toDto(User user);
 
-    @Override
-    @Mapping(target = "userId", ignore = true)
-    void updateEntity(@MappingTarget User entity, UserDto dto);
+    List<UserDto> toDto(List<User> users);
 
-    @Override
-    @Mapping(target = "userId", ignore = true)
-    void partialUpdateEntity(@MappingTarget User entity, UserDto dto);
-
-
+    default Set<String> mapRoles(Set<Role> roles) {
+        if (roles == null) {
+            return null;
+        }
+        return roles.stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+    }
 }

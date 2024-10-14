@@ -1,7 +1,7 @@
 -- Users table (removed role enum)
 CREATE TABLE `users`
 (
-    `user_id`    int PRIMARY KEY AUTO_INCREMENT,
+    `id`         int PRIMARY KEY AUTO_INCREMENT,
     `username`   varchar(255) UNIQUE NOT NULL,
     `password`   varchar(255)        NOT NULL,
     `email`      varchar(255) UNIQUE NOT NULL,
@@ -9,17 +9,18 @@ CREATE TABLE `users`
     `phone`      varchar(255),
     `balance`    decimal(10, 2) DEFAULT 0,
     `created_at` timestamp      DEFAULT (CURRENT_TIMESTAMP),
-    `updated_at` timestamp      DEFAULT (CURRENT_TIMESTAMP)
+    `created_by` varchar(255),
+    `updated_at` timestamp      DEFAULT (CURRENT_TIMESTAMP),
+    `updated_by` varchar(255),
+    `version`    int            DEFAULT 0
 );
 
 -- New roles table
-CREATE TABLE `roles`
+CREATE TABLE IF NOT EXISTS `roles`
 (
-    `role_id`     int PRIMARY KEY AUTO_INCREMENT,
+    `id`          int PRIMARY KEY AUTO_INCREMENT,
     `name`        varchar(255) UNIQUE NOT NULL,
-    `description` text,
-    `created_at`  timestamp DEFAULT (CURRENT_TIMESTAMP),
-    `updated_at`  timestamp DEFAULT (CURRENT_TIMESTAMP)
+    `description` text
 );
 
 -- New user_roles table for many-to-many relationship
@@ -30,8 +31,8 @@ CREATE TABLE `user_roles`
     `role_id`      int NOT NULL,
     `created_at`   timestamp DEFAULT (CURRENT_TIMESTAMP),
     `updated_at`   timestamp DEFAULT (CURRENT_TIMESTAMP),
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`)
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
 );
 
 -- Rest of the tables remain the same
@@ -44,7 +45,7 @@ CREATE TABLE `clubs`
     `user_id`    int          NOT NULL,
     `created_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
     `updated_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 );
 
 CREATE TABLE `chains`
@@ -110,7 +111,7 @@ CREATE TABLE `open_table_tickets`
     `discount`             decimal(10, 2),
     `created_at`           timestamp DEFAULT (CURRENT_TIMESTAMP),
     `updated_at`           timestamp DEFAULT (CURRENT_TIMESTAMP),
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     FOREIGN KEY (`table_id`) REFERENCES `tables` (`table_id`),
     FOREIGN KEY (`club_id`) REFERENCES `clubs` (`club_id`)
 );
@@ -124,7 +125,7 @@ CREATE TABLE `invoices`
     `created_at`           timestamp DEFAULT (CURRENT_TIMESTAMP),
     `updated_at`           timestamp DEFAULT (CURRENT_TIMESTAMP),
     FOREIGN KEY (`open_table_ticket_id`) REFERENCES `open_table_tickets` (`open_table_ticket_id`),
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     FOREIGN KEY (`club_id`) REFERENCES `clubs` (`club_id`)
 );
 
@@ -149,7 +150,7 @@ CREATE TABLE `points`
     `total_point` int NOT NULL,
     `created_at`  timestamp DEFAULT (CURRENT_TIMESTAMP),
     `updated_at`  timestamp DEFAULT (CURRENT_TIMESTAMP),
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     FOREIGN KEY (`chain_id`) REFERENCES `chains` (`chain_id`)
 );
 
@@ -181,8 +182,8 @@ CREATE TABLE `topup_transactions`
     `admin_id`             int,
     `created_at`           timestamp DEFAULT (CURRENT_TIMESTAMP),
     `updated_at`           timestamp DEFAULT (CURRENT_TIMESTAMP),
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-    FOREIGN KEY (`admin_id`) REFERENCES `users` (`user_id`)
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    FOREIGN KEY (`admin_id`) REFERENCES `users` (`id`)
 );
 
 CREATE TABLE `user_levels`
@@ -204,7 +205,7 @@ CREATE TABLE `user_level_history`
     `perfect_shots`    int       DEFAULT 0,
     `created_at`       timestamp DEFAULT (CURRENT_TIMESTAMP),
     `updated_at`       timestamp DEFAULT (CURRENT_TIMESTAMP),
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     FOREIGN KEY (`level_id`) REFERENCES `user_levels` (`level_id`)
 );
 
@@ -230,7 +231,7 @@ CREATE TABLE `voucher_users`
     `created_at`      timestamp DEFAULT (CURRENT_TIMESTAMP),
     `updated_at`      timestamp DEFAULT (CURRENT_TIMESTAMP),
     FOREIGN KEY (`voucher_id`) REFERENCES `vouchers` (`voucher_id`),
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 );
 
 CREATE TABLE `perfect_shots`
@@ -241,7 +242,7 @@ CREATE TABLE `perfect_shots`
     `video_url`            varchar(255),
     `created_at`           timestamp DEFAULT (CURRENT_TIMESTAMP),
     `updated_at`           timestamp DEFAULT (CURRENT_TIMESTAMP),
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     FOREIGN KEY (`open_table_ticket_id`) REFERENCES `open_table_tickets` (`open_table_ticket_id`)
 );
 
@@ -250,3 +251,10 @@ INSERT INTO `roles` (`name`, `description`)
 VALUES ('user', 'Regular user role'),
        ('club', 'Club owner or manager role'),
        ('admin', 'System administrator role');
+
+select * from roles;
+
+SHOW TABLES;
+DESCRIBE users;
+DESCRIBE roles;
+DESCRIBE user_roles;

@@ -29,7 +29,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers(query, pageable));
     }
 
-
     @PostMapping
     public ResponseEntity<?> saveUser(@RequestBody CreateUserRequest request) {
         try {
@@ -41,9 +40,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "An unexpected error occurred");
+            errorResponse.put("error", "An unexpected error occurred: " + e.getMessage());
+            errorResponse.put("type", e.getClass().getSimpleName());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
-
 }

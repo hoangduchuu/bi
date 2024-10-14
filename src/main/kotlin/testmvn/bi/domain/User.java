@@ -2,11 +2,13 @@ package testmvn.bi.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import testmvn.bi.domain.base.BaseEntity;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Arrays;
 
@@ -14,12 +16,9 @@ import java.util.Arrays;
 @Table(name = "users")
 @Getter
 @Setter
+@NoArgsConstructor
 public class User extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long userId;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -36,20 +35,17 @@ public class User extends BaseEntity {
     @Column
     private String phone;
 
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            name = "user_roles",  // Changed to match the actual table name
+            joinColumns = @JoinColumn(name = "user_id"),  // Changed to match the foreign key column name
+            inverseJoinColumns = @JoinColumn(name = "role_id")  // Changed to match the foreign key column name
     )
     private Set<Role> roles = new HashSet<>();
 
     @Column(precision = 10, scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;
-
-    // Constructors
-    public User() {
-    }
 
     public User(String username, String email, String fullname) {
         this.username = username;
@@ -96,13 +92,12 @@ public class User extends BaseEntity {
         return this.balance.compareTo(amount) >= 0;
     }
 
-    // Override methods
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return getUserId() != null && getUserId().equals(user.getUserId());
+        return Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(fullname, user.fullname) && Objects.equals(phone, user.phone) && Objects.equals(roles, user.roles) && Objects.equals(balance, user.balance);
     }
 
     @Override
@@ -110,14 +105,5 @@ public class User extends BaseEntity {
         return getClass().hashCode();
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", fullname='" + fullname + '\'' +
-                ", roles=" + roles +
-                '}';
-    }
+
 }

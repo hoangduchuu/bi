@@ -42,7 +42,7 @@ public class UserServiceImpl implements IUserService {
         user.setPhone(request.getPhone());
 
         // Set role
-        Role adminRole = roleRepository.findByName("ADMIN")
+        Role adminRole = roleRepository.findByName(request.getRole())
                 .orElseThrow(() -> new IllegalStateException("ADMIN role not found"));
         user.addRole(adminRole);
 

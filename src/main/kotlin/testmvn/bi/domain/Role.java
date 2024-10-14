@@ -3,19 +3,19 @@ package testmvn.bi.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import testmvn.bi.domain.base.BaseEntity;
 
 @Entity
 @Table(name = "roles")
 @Getter
 @Setter
-public class Role extends BaseEntity {
+@NoArgsConstructor
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id")
-    private Long roleId;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String name;
@@ -23,31 +23,48 @@ public class Role extends BaseEntity {
     @Column
     private String description;
 
-    public Role() {
-    }
-
+    // Constructor with name
     public Role(String name) {
         this.name = name;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Role)) return false;
-        Role role = (Role) o;
-        return getName() != null && getName().equalsIgnoreCase(role.getName());
+    public Role(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    public Role(Long id, String description) {
+        this.id = id;
+        this.description = description;
     }
 
-    @Override
-    public String toString() {
-        return "Role{" +
-                "roleId=" + roleId +
-                ", name='" + name + '\'' +
-                '}';
+    public Role(Long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
